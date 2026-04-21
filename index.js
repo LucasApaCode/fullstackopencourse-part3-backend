@@ -44,12 +44,6 @@ let persons = [
   },
 ];
 
-const generateId = () => {
-  const maxId = persons.length > 0 ? Math.max(...persons.map((p) => p.id)) : 0;
-  const newId = Math.floor(Math.random() * 10000000);
-  return newId;
-};
-
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((p) => {
     response.json(p);
@@ -64,7 +58,7 @@ app.get("/info", (request, response) => {
   );
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
       if (person) {
@@ -114,7 +108,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
